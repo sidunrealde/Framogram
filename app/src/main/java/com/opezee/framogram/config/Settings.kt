@@ -23,6 +23,8 @@ data class AppSettings(
     /** Index into [SettingsStore.GRID_COLORS]. */
     val gridColorIndex: Int = 0,
     val landscape: Boolean = false,
+    /** True = IBL + key light; false = flat shadeless rendering. */
+    val lit: Boolean = true,
     /** Key of the last loaded model: "asset:<file>" or "uri:<content-uri>". */
     val lastModel: String = "",
     val recents: List<RecentModel> = emptyList(),
@@ -45,6 +47,7 @@ class SettingsStore(private val context: Context) {
         private val GRID_PATTERN = intPreferencesKey("grid_pattern")
         private val GRID_COLOR = intPreferencesKey("grid_color")
         private val LANDSCAPE = booleanPreferencesKey("landscape")
+        private val LIT = booleanPreferencesKey("lit")
         private val LAST_MODEL = stringPreferencesKey("last_model")
         private val RECENTS = stringPreferencesKey("recents")
         private val DEBUG = booleanPreferencesKey("debug_overlay")
@@ -59,6 +62,7 @@ class SettingsStore(private val context: Context) {
             gridPattern = p[GRID_PATTERN] ?: 0,
             gridColorIndex = p[GRID_COLOR] ?: 0,
             landscape = p[LANDSCAPE] ?: false,
+            lit = p[LIT] ?: true,
             lastModel = p[LAST_MODEL] ?: "",
             recents = decodeRecents(p[RECENTS] ?: ""),
             debugOverlay = p[DEBUG] ?: false,
@@ -71,6 +75,7 @@ class SettingsStore(private val context: Context) {
     suspend fun setGridPattern(v: Int) = context.dataStore.edit { it[GRID_PATTERN] = v }
     suspend fun setGridColorIndex(v: Int) = context.dataStore.edit { it[GRID_COLOR] = v }
     suspend fun setLandscape(v: Boolean) = context.dataStore.edit { it[LANDSCAPE] = v }
+    suspend fun setLit(v: Boolean) = context.dataStore.edit { it[LIT] = v }
     suspend fun setLastModel(v: String) = context.dataStore.edit { it[LAST_MODEL] = v }
     suspend fun setDebugOverlay(v: Boolean) = context.dataStore.edit { it[DEBUG] = v }
 

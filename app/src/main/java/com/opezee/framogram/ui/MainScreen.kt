@@ -39,6 +39,7 @@ fun MainScreen(
     onLoadRecent: (RecentModel) -> Unit,
     onPickFile: () -> Unit,
     onToggleOrientation: () -> Unit,
+    onLit: (Boolean) -> Unit,
     onPattern: (Int) -> Unit,
     onColorIndex: (Int) -> Unit,
     onDebugOverlay: (Boolean) -> Unit,
@@ -72,6 +73,7 @@ fun MainScreen(
                         SettingsDrawerContent(
                             settings = settings,
                             onToggleOrientation = onToggleOrientation,
+                            onLit = onLit,
                             onPattern = onPattern,
                             onColorIndex = onColorIndex,
                             onDebugOverlay = onDebugOverlay,
