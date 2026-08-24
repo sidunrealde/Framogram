@@ -35,6 +35,7 @@ import com.opezee.framogram.config.SettingsStore
 fun SettingsDrawerContent(
     settings: AppSettings,
     onToggleOrientation: () -> Unit,
+    onLit: (Boolean) -> Unit,
     onPattern: (Int) -> Unit,
     onColorIndex: (Int) -> Unit,
     onDebugOverlay: (Boolean) -> Unit,
@@ -63,6 +64,22 @@ fun SettingsDrawerContent(
                 if (settings.landscape) "Switch to portrait" else "Switch to landscape",
                 color = Glass.accent, fontSize = 15.sp,
             )
+        }
+
+        Spacer(Modifier.height(22.dp))
+        Text("Lighting", color = Glass.textSecondary, fontSize = 12.sp)
+        Spacer(Modifier.height(8.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf(true to "Lit", false to "Unlit").forEach { (lit, label) ->
+                Box(
+                    Modifier
+                        .glassRow(selected = settings.lit == lit)
+                        .clickable { onLit(lit) }
+                        .padding(horizontal = 14.dp, vertical = 10.dp)
+                ) {
+                    Text(label, color = Glass.textPrimary, fontSize = 14.sp)
+                }
+            }
         }
 
         Spacer(Modifier.height(22.dp))

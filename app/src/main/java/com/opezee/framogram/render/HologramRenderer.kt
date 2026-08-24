@@ -99,8 +99,9 @@ class HologramRenderer(
         }
     }
 
+    private val lighting = Lighting(filament.engine, filament.scene, context)
+
     init {
-        IblLoader.setupLighting(filament.engine, filament.scene, context)
         gridBox.rebuild(initialGeometry)
     }
 
@@ -128,10 +129,14 @@ class HologramRenderer(
 
     fun setGridColor(r: Float, g: Float, b: Float) = gridBox.setColor(r, g, b)
 
+    /** Lit = IBL + key light; unlit = flat shadeless look. */
+    fun setLit(lit: Boolean) = lighting.setLit(lit)
+
     fun destroy() {
         stop()
         modelLoader.destroy()
         gridBox.destroy()
+        lighting.destroy()
         filament.destroy()
     }
 }
