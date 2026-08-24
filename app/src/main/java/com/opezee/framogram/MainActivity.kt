@@ -112,12 +112,14 @@ class MainActivity : ComponentActivity() {
         )
         renderer.setGridPattern(initial.gridPattern)
         applyGridColor(initial.gridColorIndex)
+        renderer.setLit(initial.lit)
 
-        // Keep settings state fresh and push grid changes to the renderer.
+        // Keep settings state fresh and push render-affecting changes to the renderer.
         lifecycleScope.launch {
             settingsStore.flow.collect { s ->
                 if (s.gridPattern != settings.gridPattern) renderer.setGridPattern(s.gridPattern)
                 if (s.gridColorIndex != settings.gridColorIndex) applyGridColor(s.gridColorIndex)
+                if (s.lit != settings.lit) renderer.setLit(s.lit)
                 settings = s
             }
         }
@@ -137,6 +139,7 @@ class MainActivity : ComponentActivity() {
                         openDocument.launch(arrayOf("model/gltf-binary", "application/octet-stream"))
                     },
                     onToggleOrientation = ::toggleOrientation,
+                    onLit = { lit -> lifecycleScope.launch { settingsStore.setLit(lit) } },
                     onPattern = { p -> lifecycleScope.launch { settingsStore.setGridPattern(p) } },
                     onColorIndex = { c -> lifecycleScope.launch { settingsStore.setGridColorIndex(c) } },
                     onDebugOverlay = { d -> lifecycleScope.launch { settingsStore.setDebugOverlay(d) } },
