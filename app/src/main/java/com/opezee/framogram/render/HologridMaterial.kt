@@ -86,6 +86,12 @@ object HologridMaterial {
             float p = materialParams.pattern;
             float v = p < 0.5 ? lines : (p < 1.5 ? dots : crosses);
 
+            // Moire kill: when cells shrink toward a pixel (grazing angles, far depth),
+            // the pattern is unresolvable and shimmers — fade it out instead. fw is in
+            // cells-per-pixel; by ~1 cell/pixel the pattern must be gone.
+            float density = max(fw.x, fw.y);
+            v *= 1.0 - smoothstep(0.35, 1.0, density);
+
             // Brightest at the screen plane, dissolving toward the back; the back wall
             // keeps a small constant floor so the box reads as closed.
             float fade = pow(clamp(1.0 - depth01, 0.0, 1.0), materialParams.fadePower);

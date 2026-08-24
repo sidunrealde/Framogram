@@ -26,10 +26,10 @@ class GridBox(private val engine: Engine, private val scene: Scene) {
     private val material = HologridMaterial.build(engine)
     private val materialInstance: MaterialInstance = material.createInstance().apply {
         setParameter("gridColor", 0.20f, 0.80f, 1.00f)
-        setParameter("cellSize", 0.018f)
-        setParameter("lineWidthPx", 1.3f)
-        setParameter("fadePower", 1.6f)
-        setParameter("backFloor", 0.18f)
+        setParameter("cellSize", 0.018f) // overwritten per-geometry in rebuild()
+        setParameter("lineWidthPx", 1.4f)
+        setParameter("fadePower", 2.0f)
+        setParameter("backFloor", 0.12f)
         setParameter("pattern", 0f)
         setParameter("dotRadius", 0.09f)
         setParameter("crossLen", 0.16f)
@@ -54,6 +54,10 @@ class GridBox(private val engine: Engine, private val scene: Scene) {
         val hw = geom.widthM / 2f
         val hh = geom.heightM / 2f
         val d = geom.depthM
+
+        // Cell size scales with the box so the grid density is consistent across
+        // devices and orientations (~10 cells along the larger screen dimension).
+        materialInstance.setParameter("cellSize", maxOf(geom.widthM, geom.heightM) / 10f)
 
         // 5 quads * 4 vertices * 7 floats.
         val verts = FloatArray(5 * 4 * 7)
