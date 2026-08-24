@@ -1,4 +1,10 @@
 [
   { "name": "Damaged Helmet", "file": "models/DamagedHelmet.glb" },
-  { "name": "Avocado", "file": "models/Avocado.glb" }
+  { "name": "Avocado", "file": "models/Avocado.glb" },
+  { "name": "Duck", "file": "models/Duck.glb" },
+  { "name": "Lantern", "file": "models/Lantern.glb" },
+  { "name": "Water Bottle", "file": "models/WaterBottle.glb" },
+  { "name": "Toy Car", "file": "models/ToyCar.glb" },
+  { "name": "Corset", "file": "models/Corset.glb" },
+  { "name": "Barramundi Fish", "file": "models/BarramundiFish.glb" }
 ]
