@@ -38,9 +38,13 @@ class EyeState {
     val lastSampleAgeMs: Double
         get() = latest?.let { (System.nanoTime() - it.timestampNs) / 1e6 } ?: Double.MAX_VALUE
 
-    private val fx = OneEuroFilter()
-    private val fy = OneEuroFilter()
-    private val fz = OneEuroFilter(beta = 0.3)
+    // Tuned against on-device jitter: a low minCutoff strongly smooths the sub-cm
+    // measurement noise while the head is still, and a higher beta releases the
+    // smoothing as soon as real motion starts, so fast moves stay tight. Distance (z)
+    // is noisier and less latency-critical, so it gets an even lower cutoff.
+    private val fx = OneEuroFilter(minCutoff = 0.35, beta = 0.9)
+    private val fy = OneEuroFilter(minCutoff = 0.35, beta = 0.9)
+    private val fz = OneEuroFilter(minCutoff = 0.25, beta = 0.4)
 
     private var lastConsumedTs = 0L
     private var wasTracking = false
@@ -80,12 +84,21 @@ class EyeState {
                 outY = fy.filter(sample.y, t)
                 outZ = fz.filter(sample.z, t)
             }
-            // Predict forward by the measured motion-to-render latency.
-            val lat = ((frameTimeNanos - sample.timestampNs) / 1e9).coerceIn(0.0, MAX_PREDICT_S)
+            // Predict forward by the measured motion-to-render latency — but only while
+            // actually moving: at rest, velocity noise times the latency window would
+            // re-introduce the jitter the filters just removed. Ramps in between
+            // 3 cm/s and 13 cm/s of head speed.
+            val vx = fx.velocity
+            val vy = fy.velocity
+            val vz = fz.velocity
+            val speed = kotlin.math.sqrt(vx * vx + vy * vy + vz * vz)
+            val predictScale = ((speed - 0.03) / 0.10).coerceIn(0.0, 1.0)
+            val lat = ((frameTimeNanos - sample.timestampNs) / 1e9)
+                .coerceIn(0.0, MAX_PREDICT_S) * predictScale
             return doubleArrayOf(
-                outX + fx.velocity * lat,
-                outY + fy.velocity * lat,
-                (outZ + fz.velocity * lat).coerceAtLeast(0.15),
+                outX + vx * lat,
+                outY + vy * lat,
+                (outZ + vz * lat).coerceAtLeast(0.15),
             )
         }
 

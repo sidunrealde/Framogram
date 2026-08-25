@@ -33,7 +33,7 @@ class GridBox(private val engine: Engine, private val scene: Scene) {
         setParameter("pattern", 0f)
         setParameter("dotRadius", 0.09f)
         setParameter("crossLen", 0.16f)
-        setParameter("nodeRadiusPx", 2.4f)
+        setParameter("nodeRadiusPx", 3.0f)
     }
 
     private var entity = 0
@@ -57,8 +57,9 @@ class GridBox(private val engine: Engine, private val scene: Scene) {
         val d = geom.depthM
 
         // Cell size scales with the box so the grid density is consistent across
-        // devices and orientations (~10 cells along the larger screen dimension).
-        materialInstance.setParameter("cellSize", maxOf(geom.widthM, geom.heightM) / 10f)
+        // devices and orientations (~7 cells along the larger screen dimension —
+        // fewer, larger cells keep the heavily foreshortened side walls legible).
+        materialInstance.setParameter("cellSize", maxOf(geom.widthM, geom.heightM) / 7f)
 
         // 5 quads * 4 vertices * 7 floats.
         val verts = FloatArray(5 * 4 * 7)
