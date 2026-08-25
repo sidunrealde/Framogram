@@ -27,12 +27,13 @@ class GridBox(private val engine: Engine, private val scene: Scene) {
     private val materialInstance: MaterialInstance = material.createInstance().apply {
         setParameter("gridColor", 0.20f, 0.80f, 1.00f)
         setParameter("cellSize", 0.018f) // overwritten per-geometry in rebuild()
-        setParameter("lineWidthPx", 1.4f)
-        setParameter("fadePower", 2.0f)
-        setParameter("backFloor", 0.12f)
+        setParameter("lineWidthPx", 1.2f)
+        setParameter("fadePower", 2.3f)
+        setParameter("backFloor", 0.05f)
         setParameter("pattern", 0f)
         setParameter("dotRadius", 0.09f)
         setParameter("crossLen", 0.16f)
+        setParameter("nodeRadiusPx", 2.4f)
     }
 
     private var entity = 0
