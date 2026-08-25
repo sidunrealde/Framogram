@@ -37,6 +37,7 @@ object HologridMaterial {
                 .uniformParameter(MaterialBuilder.UniformType.FLOAT, "pattern")
                 .uniformParameter(MaterialBuilder.UniformType.FLOAT, "dotRadius")
                 .uniformParameter(MaterialBuilder.UniformType.FLOAT, "crossLen")
+                .uniformParameter(MaterialBuilder.UniformType.FLOAT, "nodeRadiusPx")
                 .material(FRAGMENT)
                 .build()
             check(pkg.isValid) { "hologrid material failed to compile" }
@@ -83,8 +84,17 @@ object HologridMaterial {
             float within = step(max(fc.x, fc.y), materialParams.crossLen);
             float crosses = max(armX, armY) * within;
 
+            // Bright nodes at the intersections; the connecting lines stay dimmer so
+            // the wireframe reads as points joined by faint lines.
+            float nodePx = length(pxd);
+            float node = 1.0 - smoothstep(
+                materialParams.nodeRadiusPx - 1.0,
+                materialParams.nodeRadiusPx + 1.0,
+                nodePx);
+            float linesNodes = max(lines * 0.5, node);
+
             float p = materialParams.pattern;
-            float v = p < 0.5 ? lines : (p < 1.5 ? dots : crosses);
+            float v = p < 0.5 ? linesNodes : (p < 1.5 ? dots : crosses);
 
             // Moire kill: when cells shrink toward a pixel (grazing angles, far depth),
             // the pattern is unresolvable and shimmers — fade it out instead. fw is in
